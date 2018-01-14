@@ -3,11 +3,15 @@
 
 
 #include <foas/common/Task.h>
+#include <foas/message/Bus.h>
 
 
 namespace foas {
   namespace node {
     class Node {
+    private:
+      message::Bus mBus;
+      
     public:
       Node();
       ~Node();
