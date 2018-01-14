@@ -1,4 +1,4 @@
-# Node
+# Node [![Build Status](https://travis-ci.org/FantasticOnAStick/foas_node.svg?branch=master)](https://travis-ci.org/FantasticOnAStick/foas_node)
 
 Main node code that serves as a runner application for all added functionality. This code serves as a main entry point for other foas components:
 
