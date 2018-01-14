@@ -26,6 +26,8 @@ mkdir foas
 ```bash
 git clone https://github.com/FantasticOnAStick/foas_node.git
 git clone https://github.com/FantasticOnAStick/foas_common.git
+git clone https://github.com/FantasticOnAStick/foas_message.git
+git clone https://github.com/FantasticOnAStick/foas_plugin.git
 ```
 
 
