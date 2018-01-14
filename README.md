@@ -3,7 +3,6 @@
 Main node code that serves as a runner application for all added functionality. This code serves as a main entry point for other foas components:
 
 * foas_plugin: Plugin loader
-* foas_config: Configuration manager
 * foas_message: Message bus
 
 
@@ -16,7 +15,7 @@ This section describes -- step by step -- how to download, compile and run foas_
 
 First, you have to get the base repository of `foas_node` and all its dependencies. Follow these steps to get everything set up:
 
-1. Create a working directory where all `foas_*` repositories will reside
+1. Create a working directory where all `foas_*` repositories will reside:
 
 ```bash
 mkdir foas
