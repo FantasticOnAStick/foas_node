@@ -9,17 +9,23 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic")
 
 add_subdirectory(../foas_common build/foas_common)
+add_subdirectory(../foas_message build/foas_message)
+add_subdirectory(../foas_plugin build/foas_plugin)
 
 include_directories(
   include
-  ../foas_common/include)
+  ../foas_common/include
+  ../foas_message/include
+  ../foas_plugin/include)
 
 file(GLOB_RECURSE LIB_SRC src/node FOLLOW_SYMLINKS *.cpp)
 add_library(${PROJECT_NAME}
   ${LIB_SRC})
 
 target_link_libraries(${PROJECT_NAME}
-  foas_common)
+  foas_common
+  foas_message
+  foas_plugin)
 
 add_executable(${PROJECT_NAME}-bin
   src/main.cpp)
