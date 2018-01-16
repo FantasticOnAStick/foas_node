@@ -9,9 +9,9 @@ int main(int argc, char** argv) {
   foas::node::Node main;
   
   if(main.Initialize()) {
-    foas::common::Task runTask = main.Run();
-    runTask.Start();
-    foas::common::TaskResult result = runTask.Wait();
+    std::shared_ptr<foas::common::Task> runTask = main.Run();
+    runTask->Start();
+    foas::common::TaskResult result = runTask->Wait();
     
     switch(result.Status) {
     case foas::common::Success: {

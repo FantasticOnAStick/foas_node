@@ -2,6 +2,8 @@
 #define __FOAS_NODE_NODE_H__
 
 
+#include <memory>
+
 #include <foas/common/Task.h>
 #include <foas/message/Bus.h>
 
@@ -17,7 +19,7 @@ namespace foas {
       ~Node();
 
       bool Initialize();
-      common::Task Run();
+      std::shared_ptr<common::Task> Run();
     };
   }
 }

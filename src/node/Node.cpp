@@ -13,10 +13,10 @@ namespace foas {
       return true;
     }
     
-    common::Task Node::Run() {
-      common::Task task;
-      
-      // ...
+    std::shared_ptr<common::Task> Node::Run() {
+      std::shared_ptr<common::Task> task = std::make_shared<common::Task>([] {
+	  // ...
+	});
       
       return task;
     }
