@@ -10,6 +10,7 @@ before_install:
  - git clone http://github.com/FantasticOnAStick/foas_message.git
  - git clone http://github.com/FantasticOnAStick/foas_plugin.git
  - git clone http://github.com/FantasticOnAStick/foas_node.git
+ - git clone http://github.com/FantasticOnAStick/plugins.git
 
 script:
  - cd foas_node

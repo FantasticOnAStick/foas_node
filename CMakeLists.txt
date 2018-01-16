@@ -40,3 +40,8 @@ add_executable(${PROJECT_NAME}-bin
 
 target_link_libraries(${PROJECT_NAME}-bin
   foas_node)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/plugins)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/plugins)
+
+add_subdirectory(../plugins build/plugins)
