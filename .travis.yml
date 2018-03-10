@@ -6,11 +6,20 @@ compiler:
  - gcc
 
 before_install:
+ - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
  - git clone http://github.com/FantasticOnAStick/foas_common.git
  - git clone http://github.com/FantasticOnAStick/foas_message.git
  - git clone http://github.com/FantasticOnAStick/foas_plugin.git
  - git clone http://github.com/FantasticOnAStick/foas_node.git
  - git clone http://github.com/FantasticOnAStick/plugins.git
+
+addons:
+  apt:
+    sources:
+     - ubuntu-toolchain-r-test
+    packages:
+     - gcc-4.9
+     - g++-4.9
 
 script:
  - cd foas_node
