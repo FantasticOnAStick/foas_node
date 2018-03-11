@@ -3,7 +3,7 @@
 
 namespace foas {
   namespace node {
-    Node::Node() : mShutdownRequested(false) {
+    Node::Node() : mShutdownRequested(false), mBus(std::make_shared<message::Bus>("node")) {
     }
     
     Node::~Node() {
@@ -25,7 +25,7 @@ namespace foas {
       }
       
       // TODO: Read config file, instantiate plugins accordingly.
-      std::shared_ptr<plugin::PluginInstance> pi_node_info = mPluginManager.InstantiateTemplate("node_info");
+      std::shared_ptr<plugin::PluginInstance> pi_node_info = mPluginManager.InstantiateTemplate("node_info", mBus->CreateSubBus("node_info"));
       
       return true;
     }

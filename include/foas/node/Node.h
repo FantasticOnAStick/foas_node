@@ -24,7 +24,7 @@ namespace foas {
   namespace node {
     class Node {
     private:
-      message::Bus mBus;
+      std::shared_ptr<message::Bus> mBus;
       plugin::PluginManager mPluginManager;
       
       std::mutex mCycleMutex;
