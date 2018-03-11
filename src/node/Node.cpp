@@ -25,6 +25,7 @@ namespace foas {
       }
       
       // TODO: Read config file, instantiate plugins accordingly.
+      std::shared_ptr<plugin::PluginInstance> pi_node_info = mPluginManager.InstantiateTemplate("node_info");
       
       return true;
     }
