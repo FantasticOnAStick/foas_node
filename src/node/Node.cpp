@@ -10,6 +10,16 @@ namespace foas {
     }
     
     bool Node::Initialize() {
+      std::string configFile = "default.config";
+      std::string configFilePath = common::FileSystem::GetExecutablePath() + "/../config/" + configFile;
+      
+      std::shared_ptr<common::parsers::Parser> parser = std::make_shared<common::parsers::JsonParser>();
+      std::shared_ptr<common::Property> config = parser->ParseFile(configFilePath);
+      
+      if(config != nullptr) {
+	// ...
+      }
+      
       // Load all the plugin templates.
       std::string pluginsDirectory = common::FileSystem::GetExecutableDirectory() + "../plugins";
       std::list<common::FileSystem::FileSystemEntry> files = common::FileSystem::GetDirectoryContents(pluginsDirectory);

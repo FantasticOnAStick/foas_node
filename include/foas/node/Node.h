@@ -12,6 +12,7 @@
 #include <foas/common/Task.h>
 #include <foas/common/FileSystem.h>
 #include <foas/common/Regex.h>
+#include <foas/common/parsers/JsonParser.h>
 
 // foas_message
 #include <foas/message/Bus.h>
@@ -32,7 +33,7 @@ namespace foas {
 
       std::mutex mShutdownMutex;
       bool mShutdownRequested;
-
+      
       bool WasShutdownRequested();
       
     public:

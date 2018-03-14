@@ -23,6 +23,7 @@ endif()
 include_directories(
   include
   ../foas_common/include
+  ../foas_common/3rdparty/json-c
   ../foas_message/include
   ../foas_plugin/include)
 
