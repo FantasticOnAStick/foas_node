@@ -11,7 +11,7 @@ namespace foas {
     
     bool Node::Initialize() {
       std::string configFile = "default.config";
-      std::string configFilePath = common::FileSystem::GetExecutablePath() + "/../config/" + configFile;
+      std::string configFilePath = common::FileSystem::GetExecutableDirectory() + "/../config/" + configFile;
       
       std::shared_ptr<common::parsers::Parser> parser = std::make_shared<common::parsers::JsonParser>();
       std::shared_ptr<common::Property> config = parser->ParseFile(configFilePath);
