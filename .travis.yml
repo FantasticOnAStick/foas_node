@@ -8,7 +8,7 @@ compiler:
 before_install:
  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
  - git clone http://github.com/FantasticOnAStick/foas_common.git
- - cd foas_common && ./prepare.h
+ - cd foas_common && ./prepare.sh
  - cd -
  - git clone http://github.com/FantasticOnAStick/foas_message.git
  - git clone http://github.com/FantasticOnAStick/foas_plugin.git
