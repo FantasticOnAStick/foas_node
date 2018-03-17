@@ -27,7 +27,7 @@ include_directories(
   ../foas_message/include
   ../foas_plugin/include)
 
-file(GLOB_RECURSE LIB_SRC src/node FOLLOW_SYMLINKS *.cpp)
+file(GLOB_RECURSE LIB_SRC FOLLOW_SYMLINKS src/node/*.cpp)
 add_library(${PROJECT_NAME}
   ${LIB_SRC})
 
@@ -46,3 +46,5 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/plugins)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/plugins)
 
 add_subdirectory(../plugins build/plugins)
+
+enableGTesting()
