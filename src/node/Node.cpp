@@ -10,34 +10,85 @@ namespace foas {
     }
     
     bool Node::Initialize() {
-      std::string configFile = "default.config";
-      std::string configFilePath = common::FileSystem::GetExecutableDirectory() + "/../config/" + configFile;
+      if(this->LoadConfiguration("../config/default.config")) {
+	return true;
+      }
+      
+      return false;
+    }
+    
+    bool Node::LoadConfiguration(std::string configFilePath) {
+      std::string absoluteConfigFilePath = common::FileSystem::GetAbsolutePath(common::FileSystem::GetExecutableDirectory(), configFilePath);
       
       std::shared_ptr<common::parsers::Parser> parser = std::make_shared<common::parsers::JsonParser>();
-      std::shared_ptr<common::Property> config = parser->ParseFile(configFilePath);
+      std::shared_ptr<common::Property> configRoot = parser->ParseFile(absoluteConfigFilePath);
       
-      if(config != nullptr) {
-	// ...
-      }
-      
-      // Load all the plugin templates.
-      std::string pluginsDirectory = common::FileSystem::GetExecutableDirectory() + "../plugins";
-      std::list<common::FileSystem::FileSystemEntry> files = common::FileSystem::GetDirectoryContents(pluginsDirectory);
-      
-      for(common::FileSystem::FileSystemEntry fil : files) {
-	if(fil.type == common::FileSystem::FileSystemEntryType::File) {
-	  if(common::Regex::Matches("libfoas_plugins_(.+).so", fil.name)) {
-	    std::shared_ptr<common::Task> loaderTask = mPluginManager.LoadTemplate(pluginsDirectory + "/" + fil.name);
-	    loaderTask->Start();
-	    loaderTask->Wait();
+      if(configRoot) {
+	std::shared_ptr<common::Property> configPlugins = configRoot->Get("plugins");
+	
+	if(configPlugins) {
+	  std::vector<std::string> searchPaths;
+	  std::shared_ptr<common::Property> configPluginsSearchPaths = configPlugins->Get("search-paths");
+	  
+	  if(configPluginsSearchPaths) {
+	    for(int i = 0; i < configPluginsSearchPaths->Size(); ++i) {
+	      searchPaths.push_back(configPluginsSearchPaths->Get(i)->Get<std::string>());
+	    }
+	  }
+	  
+	  std::vector<std::string> filenamePatterns;
+	  std::shared_ptr<common::Property> configPluginsFilenamePatterns = configPlugins->Get("filename-patterns");
+	  
+	  if(configPluginsFilenamePatterns) {
+	    for(int i = 0; i < configPluginsFilenamePatterns->Size(); ++i) {
+	      filenamePatterns.push_back(configPluginsFilenamePatterns->Get(i)->Get<std::string>());
+	    }
+	  }
+
+	  for(std::string searchPath : searchPaths) {
+	    std::string absoluteSearchPath = common::FileSystem::GetAbsolutePath(common::FileSystem::GetExecutableDirectory(), searchPath);
+	    
+	    std::list<common::FileSystem::FileSystemEntry> files = common::FileSystem::GetDirectoryContents(absoluteSearchPath);
+	    
+	    for(common::FileSystem::FileSystemEntry fil : files) {
+	      if(fil.type == common::FileSystem::FileSystemEntryType::File) {
+		bool matches = false;
+
+		for(std::string filenamePattern : filenamePatterns) {
+		  if(common::Regex::Matches(filenamePattern, fil.name)) {
+		    matches = true;
+		    break;
+		  }
+		}
+
+		if(matches) {
+		  std::shared_ptr<common::Task> loaderTask = mPluginManager.LoadTemplate(common::FileSystem::GetAbsolutePath(absoluteSearchPath, fil.name));
+		  
+		  loaderTask->Start();
+		  loaderTask->Wait();
+		}
+	      }
+	    }
+	  }
+	  
+	  std::shared_ptr<common::Property> configPluginsInstances = configPlugins->Get("instances");
+	  
+	  if(configPluginsInstances) {
+	    for(int i = 0; i < configPluginsInstances->Size(); ++i) {
+	      std::string name = configPluginsInstances->Get(i)->Get("name")->Get<std::string>();
+	      std::string type = configPluginsInstances->Get(i)->Get("type")->Get<std::string>();
+	      
+	      std::shared_ptr<plugin::PluginInstance> instance = mPluginManager.InstantiateTemplate(type, mBus->CreateSubBus(name));
+	    }
 	  }
 	}
+	
+	return true;
+      } else {
+	std::cerr << "Unable to parse config file '" << absoluteConfigFilePath << "'" << std::endl;
       }
       
-      // TODO: Read config file, instantiate plugins accordingly.
-      std::shared_ptr<plugin::PluginInstance> pi_node_info = mPluginManager.InstantiateTemplate("node_info", mBus->CreateSubBus("node_info"));
-      
-      return true;
+      return false;
     }
     
     std::shared_ptr<common::Task> Node::Run() {

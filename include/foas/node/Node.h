@@ -41,6 +41,8 @@ namespace foas {
       ~Node();
       
       bool Initialize();
+      bool LoadConfiguration(std::string configFilePath);
+      
       std::shared_ptr<common::Task> Run();
       
       void Stop();
