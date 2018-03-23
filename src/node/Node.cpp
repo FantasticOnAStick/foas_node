@@ -3,7 +3,7 @@
 
 namespace foas {
   namespace node {
-    Node::Node() : mShutdownRequested(false), mBus(std::make_shared<message::Bus>("node")) {
+    Node::Node() : mShutdown(false), mBus(std::make_shared<message::Bus>("node")) {
     }
     
     Node::~Node() {
@@ -79,6 +79,8 @@ namespace foas {
 	      std::string type = configPluginsInstances->Get(i)->Get("type")->Get<std::string>();
 	      
 	      std::shared_ptr<plugin::PluginInstance> instance = mPluginManager.InstantiateTemplate(type, mBus->CreateSubBus(name));
+
+	      mPluginInstances.push_back(instance);
 	    }
 	  }
 	}
@@ -95,32 +97,30 @@ namespace foas {
       std::shared_ptr<common::Task> task = std::make_shared<common::Task>([=] {
 	  std::unique_lock<std::mutex> lock(mCycleMutex);
 	  
-	  while(!this->WasShutdownRequested()) {
+	  while(mShutdown == false) {
 	    mCycleStepper.wait(lock);
 	    
 	    this->ProcessEvents();
+	  }
+	  
+	  for(std::shared_ptr<plugin::PluginInstance> instance : mPluginInstances) {
+	    instance->Deinitialize();
 	  }
 	});
       
       return task;
     }
     
-    bool Node::WasShutdownRequested() {
-      std::lock_guard<std::mutex> lock(mShutdownMutex);
-      
-      return mShutdownRequested;
-    }
-    
     void Node::Stop() {
-      std::lock_guard<std::mutex> lock(mShutdownMutex);
+      mShutdown = true;
       
-      mShutdownRequested = true;
+      this->Step();
     }
     
     void Node::Step() {
       mCycleStepper.notify_one();
     }
-
+    
     void Node::ProcessEvents() {
       // ...
     }

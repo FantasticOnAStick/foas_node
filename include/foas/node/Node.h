@@ -10,6 +10,7 @@
 
 // foas_common
 #include <foas/common/Task.h>
+#include <foas/common/Protected.hpp>
 #include <foas/common/FileSystem.h>
 #include <foas/common/Regex.h>
 #include <foas/common/parsers/JsonParser.h>
@@ -27,14 +28,12 @@ namespace foas {
     private:
       std::shared_ptr<message::Bus> mBus;
       plugin::PluginManager mPluginManager;
+      std::list<std::shared_ptr<plugin::PluginInstance>> mPluginInstances;
       
       std::mutex mCycleMutex;
       std::condition_variable mCycleStepper;
 
-      std::mutex mShutdownMutex;
-      bool mShutdownRequested;
-      
-      bool WasShutdownRequested();
+      common::Protected<bool> mShutdown;
       
     public:
       Node();
