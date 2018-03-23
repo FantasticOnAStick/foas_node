@@ -4,6 +4,14 @@ Main node code that serves as a runner application for all added functionality. 
 
 * foas_plugin: Plugin loader
 * foas_message: Message bus
+* foas_common: Common library
+
+
+
+## Next things on the list
+
+* Introducing service concept: Request, reply
+* Network concept: Communication plugin, translation layer between native messages/services and network communication
 
 
 ## Getting the source, compiling it, running the project
