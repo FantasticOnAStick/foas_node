@@ -10,6 +10,8 @@ namespace foas {
     }
     
     bool Node::Initialize() {
+      mBus->SetClassManager(std::make_shared<message::ClassManager>());
+      
       if(this->LoadConfiguration("../config/default.config")) {
 	return true;
       }
@@ -77,9 +79,11 @@ namespace foas {
 	    for(int i = 0; i < configPluginsInstances->Size(); ++i) {
 	      std::string name = configPluginsInstances->Get(i)->Get("name")->Get<std::string>();
 	      std::string type = configPluginsInstances->Get(i)->Get("type")->Get<std::string>();
-	      
-	      std::shared_ptr<plugin::PluginInstance> instance = mPluginManager.InstantiateTemplate(type, mBus->CreateSubBus(name));
 
+	      std::shared_ptr<message::Bus> instanceBus = mBus->CreateSubBus(name);
+	      instanceBus->SetClassManager(mBus->GetClassManager());
+	      std::shared_ptr<plugin::PluginInstance> instance = mPluginManager.InstantiateTemplate(type, instanceBus);
+	      
 	      mPluginInstances.push_back(instance);
 	    }
 	  }
