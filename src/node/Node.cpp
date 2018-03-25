@@ -127,15 +127,13 @@ namespace foas {
     
     void Node::ProcessEvents() {
       std::map<std::string, std::list<std::shared_ptr<message::Message>>> messageMap = mBus->CollectQueuedMessages();
-
-      std::list<std::shared_ptr<message::Message>> messages;
-      for(std::pair<std::string, std::list<std::shared_ptr<message::Message>>> mapPair : messageMap) {
-	messages.splice(messages.end(), mapPair.second);
-      }
       
-      std::cout << "Process: " << messages.size() << " message(s)" << std::endl;
-      for(std::shared_ptr<message::Message> message : messages) {
-	std::cout << " * From: " << message->GetSender() << std::endl;
+      for(std::pair<std::string, std::list<std::shared_ptr<message::Message>>> mapPair : messageMap) {
+	std::cout << "Process topic: " << mapPair.first << " (" << mapPair.second.size() << " message(s))" << std::endl;
+	
+	for(std::shared_ptr<message::Message> message : mapPair.second) {
+	  std::cout << " * From: " << message->GetSender() << std::endl;
+	}
       }
     }
   }
