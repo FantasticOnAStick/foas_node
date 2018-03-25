@@ -26,13 +26,13 @@ namespace foas {
   namespace node {
     class Node {
     private:
+      std::mutex mCycleMutex;
+      std::shared_ptr<std::condition_variable> mCycleStepper;
+
       std::shared_ptr<message::Bus> mBus;
       plugin::PluginManager mPluginManager;
       std::list<std::shared_ptr<plugin::PluginInstance>> mPluginInstances;
       
-      std::mutex mCycleMutex;
-      std::condition_variable mCycleStepper;
-
       common::Protected<bool> mShutdown;
       
     public:

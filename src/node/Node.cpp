@@ -3,7 +3,7 @@
 
 namespace foas {
   namespace node {
-    Node::Node() : mShutdown(false), mBus(std::make_shared<message::Bus>("node")) {
+    Node::Node() : mShutdown(false), mCycleStepper(std::make_shared<std::condition_variable>()), mBus(std::make_shared<message::Bus>("node", nullptr, mCycleStepper)) {
     }
     
     Node::~Node() {
@@ -81,7 +81,7 @@ namespace foas {
 	      std::string type = configPluginsInstances->Get(i)->Get("type")->Get<std::string>();
 
 	      std::shared_ptr<message::Bus> instanceBus = mBus->CreateSubBus(name);
-	      instanceBus->SetClassManager(mBus->GetClassManager());
+	      
 	      std::shared_ptr<plugin::PluginInstance> instance = mPluginManager.InstantiateTemplate(type, instanceBus);
 	      
 	      mPluginInstances.push_back(instance);
@@ -102,7 +102,7 @@ namespace foas {
 	  std::unique_lock<std::mutex> lock(mCycleMutex);
 	  
 	  while(mShutdown == false) {
-	    mCycleStepper.wait(lock);
+	    mCycleStepper->wait(lock);
 	    
 	    this->ProcessEvents();
 	  }
@@ -122,11 +122,21 @@ namespace foas {
     }
     
     void Node::Step() {
-      mCycleStepper.notify_one();
+      mCycleStepper->notify_one();
     }
     
     void Node::ProcessEvents() {
-      // ...
+      std::map<std::string, std::list<std::shared_ptr<message::Message>>> messageMap = mBus->CollectQueuedMessages();
+
+      std::list<std::shared_ptr<message::Message>> messages;
+      for(std::pair<std::string, std::list<std::shared_ptr<message::Message>>> mapPair : messageMap) {
+	messages.splice(messages.end(), mapPair.second);
+      }
+      
+      std::cout << "Process: " << messages.size() << " message(s)" << std::endl;
+      for(std::shared_ptr<message::Message> message : messages) {
+	std::cout << " * From: " << message->GetSender() << std::endl;
+      }
     }
   }
 }
